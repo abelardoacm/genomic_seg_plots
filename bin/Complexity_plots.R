@@ -1,7 +1,6 @@
 
 
 library("tidyverse")
-library("stringr")
 library("ggrepel")
 
 outdir <- "../results/Complexity_genomic_plots/"
