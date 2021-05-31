@@ -71,11 +71,11 @@ anytaxon [ORGANISM] AND srcdb_refseq[PROP]
 
 From bin you only have to type:
 ```
-./genomic_complexplot.sh <anytaxon> <windowsize> <complexity low cut> <complexity high cut>
+./genomic_complexplots.sh <anytaxon> <windowsize> <complexity low cut> <complexity high cut>
 ```
 for example with sample in included in repo
 ```
-./genomic_complexplot.sh Nidovirales 12 1.9 2.1
+./genomic_complexplots.sh Nidovirales 12 1.9 2.1
 ```
 which will save several genomic plots at [results/Complexity_genomic_plots/](https://github.com/abelardoacm/genomic_seg_plots/tree/main/results/Complexity_genomic_plots) *anytaxon* subfolder, indicating simple sequences in genome as thin lines at the top.
 
