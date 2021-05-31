@@ -38,7 +38,9 @@ Usage: seg <file> <window> <locut> <hicut> <options>
 To clone this repo via command line git, enter the following commands:
 ```
 git clone https://github.com/abelardoacm/genomic_seg_plots.git
-cd genomic_seg_plots/bin/
+cd genomic_seg_plots/
+rm -r results/
+cd bin/
 chmod +x *
 ```
 if all requirements are met you should be ready to go
