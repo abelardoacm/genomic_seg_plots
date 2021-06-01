@@ -82,12 +82,14 @@ for example with sample in included in repo
 ./genomic_complexplots.sh Nidovirales 12 1.9 2.1
 ./genomic_slimcomplots.sh Nidovirales 12 1.9 2.1
 ```
-which will save several genomic plots at [results/Complexity_genomic_plots/](https://github.com/abelardoacm/genomic_seg_plots/tree/main/results/Complexity_genomic_plots) *anytaxon* subfolder, indicating simple sequences in genome.
+will save several genomic plots at [results/Complexity_genomic_plots/](https://github.com/abelardoacm/genomic_seg_plots/tree/main/results/Complexity_genomic_plots) *anytaxon* subfolder, indicating simple sequences in genome.
 
-This is the genomic complexplot for SARS CoV2:
+This is the genomic slimcompplot for SARS CoV2:
+
+![](SARSCOV2slimplot.png)
+
+and the genomic complexplot:
 
 ![](SARSCOV2complexplot.png)
 
-and the genomic slimcompplot for SARS CoV2:
 
-![](SARSCOV2slimplot.png)
