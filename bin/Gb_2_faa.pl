@@ -193,7 +193,12 @@ while ($linea = <FILE>) { #Read by line until end of file, defines $linea variab
 	$proteina =~ s/ /_/;
 	$proteina =~ s/\s+/_/;
 	$proteina =~ s/[^a-zA-Z0-9,]/_/g;
-	
+	$proteina =~ s/,//g;
+	$organismo =~ s/,//g;
+	$TAXID =~ s/,//g;
+	$chunk1begin =~ s/,//g;
+	$chunk2end =~ s/,//g;
+	$codon_start =~ s/,//g;
 	#################################
 	#Write fasta header of protein
 	if ($linea =~ /\s+\/translation\=/) { #If $linea contains "translation" tag, recover lines corresponding to the aminoacid sequence of a protein
