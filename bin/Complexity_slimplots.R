@@ -24,6 +24,11 @@ complexity_table$adj_beg <- complexity_table$origin_beg + ((complexity_table$seg
 complexity_table$adj_end <- complexity_table$adj_beg + complexity_table$length_in_nc
 complexity_table$is_high <- str_detect(complexity_table$secuence, "^[:upper:]+$")
 complexity_table <- complexity_table %>% distinct(ncbi_taxid, secuence, .keep_all = TRUE)
+low_complexity <- complexity_table[which(complexity_table$is_high == FALSE),] 
+max_in_low_complexity <- max(low_complexity$complexity,na.rm=TRUE)
+correction_axis <- 20
+minimum_y_axis <- (min(low_complexity$complexity - max_in_low_complexity, na.rm=TRUE)/correction_axis)
+
 
 #############################################################
 taxids <- complexity_table$ncbi_taxid[!duplicated(complexity_table$ncbi_taxid)] # Make a vector containing unique taxids
@@ -100,27 +105,35 @@ for(t in taxids){
   if(length(Anytaxon_lo_complexity$viral_species)==0){
     Anytaxon_lo_complexity <- Anytaxon_lo_complexity %>% add_row(viral_species= Anytaxon_df$Viral_species[1], ncbi_taxid= Anytaxon_df$NCBI_taxid[1], origin_beg= 0, origin_end= 1, codon_start= 1, product= "none", seg_begin= 0, seg_end= 1, complexity= 0, window= 0, locut= 0, hicut= 0, secuence="", length_in_aa=0, length_in_nc=0,adj_beg=0,adj_end=0)
   }
-  outfilename = paste(Anytaxon_df$Viral_species[1],"id",Anytaxon_df$NCBI_taxid[1],"genomic-features")
+  outfilename = paste(Anytaxon_df$Viral_species[1],"id",Anytaxon_df$NCBI_taxid[1],"slimplot")
   outfilename <- str_replace_all(outfilename, "[^[:alnum:]]", "_")
   outfilename <- paste(outfilename,".tiff",sep="")
-  tiff(paste("../results/Complexity_genomic_plots/",anytaxon,"/",outfilename,sep=""), units="in", width=10, height=4, res=600) #tiff resolution parameters
+  tiff(paste("../results/Complexity_genomic_plots/",anytaxon,"/",outfilename,sep=""), units="in", width=10, height=1.8, res=600) #tiff resolution parameters
   current_genome <- ggplot() + 
-    scale_x_continuous(name=paste(Anytaxon_df$Viral_species[1]," genome positions")) + 
-    scale_y_continuous(name="") +
-    geom_rect(data=Anytaxon_df_peptides, mapping=aes(xmin=Beginning, xmax=End, ymin=0, ymax=head(alternate_v,length(End))/3, fill=product), alpha=0.5) +
-    geom_text(data=Anytaxon_df_peptides, aes(x=Beginning+(End-Beginning)/2, y=head(alternate_v,length(End))/6, label=str_wrap(product, width = 10)), size=1.3)+
+    scale_x_continuous(name=paste(Anytaxon_df$Viral_species[1])) + 
+    scale_y_continuous(limits=c(minimum_y_axis,0.15),name="") +
+    geom_segment(data = Anytaxon_df_peptides , aes(x = Beginning, y = 0, xend = Beginning, yend = 0.15), color = "gray",size=0.1)+
+    geom_segment(data = Anytaxon_df_peptides , aes(x = End, y = 0, xend = End, yend = 0.15),color = "gray",size=0.1)+
+    geom_rect(data=Anytaxon_lo_complexity, mapping=aes(xmin=adj_beg, xmax=adj_end, ymin=(0+(complexity-max_in_low_complexity)/correction_axis), ymax=0),fill="blue", alpha=0.3)+
+    geom_text(data=Anytaxon_df_peptides, aes(x=Beginning+(End-Beginning)/2, y=0.1, label=str_wrap(product, width = 8)), size=1, angle = 90)+
+    theme_bw() + 
+    theme(panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(), axis.line = element_line(colour = "white"))+
+    geom_rect(data=Anytaxon_df_genes, mapping=aes(xmin=Beginning, xmax=End, ymin=0, ymax=0.07, fill=gene), alpha=0.7)+
+    geom_text(data=Anytaxon_df_genes, aes(x=Beginning+(End-Beginning)/2, y=0.035, label=str_wrap(gene, width = 10)), size=1, angle = 90)+
     theme(legend.position="none")+
+    geom_segment(aes(x = 0, y = 0, xend = max(Anytaxon_df$End, na.rm = TRUE), yend = 0))+
     theme(axis.title.y=element_blank(),
           axis.text.y=element_blank(),
-          axis.ticks.y=element_blank())+
-    geom_rect(data=Anytaxon_df_UTRs, mapping=aes(xmin=Beginning, xmax=End, ymin=-0.1, ymax=0.1), alpha=0.5)+
-    geom_text(data=Anytaxon_df_UTRs, aes(x=c(max(Anytaxon_df$End)+(max(Anytaxon_df$End)/30),-(max(Anytaxon_df$End)/30)), y=0, label=gsub("_","' ",Region_feature_class)), size=2)+
-    geom_segment(aes(x = 0, y = 0, xend = max(Anytaxon_df$End, na.rm = TRUE), yend = 0))+
-    geom_rect(data=Anytaxon_df_genes, mapping=aes(xmin=Beginning, xmax=End, ymin=seq(from = -0.6,by = -0.2,length.out = length(gene)), ymax=seq(from = -0.4,by = -0.2,length.out = length(gene)), fill=gene), alpha=0.5) +
-    geom_text(data=Anytaxon_df_genes, aes(x=Beginning+(End-Beginning)/2, y=seq(from = -0.5,by = -0.2,length.out = length(gene)), label=str_wrap(gene, width = 10)), size=1.8)+
-    geom_segment(data=Anytaxon_df_stemloops, mapping=aes(x=Beginning,y=0, xend=End , yend=0), color="blue", size=3)+
-    geom_rect(data=Anytaxon_lo_complexity, mapping=aes(xmin=adj_beg, xmax=adj_end, ymin=(1+(normalized_complexity-mean(Anytaxon_df_complexity$normalized_complexity))), ymax=1),fill="blue", alpha=0.3)
+          axis.ticks.y=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank(),
+          axis.title.x = element_blank())+
+    geom_text(vjust="inward",hjust="inward",data=Anytaxon_df, aes(x=0, y=minimum_y_axis, label=Anytaxon_df$Viral_species[1]),color="black" ,size=2)+
+    geom_text(data=Anytaxon_df, aes(x=0, y=(-0.02), label="0"),color="gray" ,size=1.5)+
+    geom_text(data=Anytaxon_df, aes(x=max(End,na.rm=TRUE), y=(-0.02), label=max(End,na.rm=TRUE)),color="gray" ,size=1.5)+
+    geom_point(data=Anytaxon_lo_complexity, mapping=aes(x=adj_beg, y=0.07),shape=20, fill="blue", color="darkred", size=0.2)
   print(current_genome)
   dev.off()
 }
+
 
