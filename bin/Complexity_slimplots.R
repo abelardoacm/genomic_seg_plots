@@ -131,7 +131,7 @@ for(t in taxids){
     geom_text(vjust="inward",hjust="inward",data=Anytaxon_df, aes(x=0, y=minimum_y_axis, label=Anytaxon_df$Viral_species[1]),color="black" ,size=2)+
     geom_text(data=Anytaxon_df, aes(x=0, y=(-0.02), label="0"),color="gray" ,size=1.5)+
     geom_text(data=Anytaxon_df, aes(x=max(End,na.rm=TRUE), y=(-0.02), label=max(End,na.rm=TRUE)),color="gray" ,size=1.5)+
-    geom_point(data=Anytaxon_lo_complexity, mapping=aes(x=adj_beg, y=0.07),shape=20, fill="blue", color="darkred", size=0.2)
+    geom_point(data=Anytaxon_lo_complexity, mapping=aes(x=adj_beg, y=0.07),shape=20, fill="blue", color="darkred", size=0.5)
   print(current_genome)
   dev.off()
 }
