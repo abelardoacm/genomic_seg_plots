@@ -1,5 +1,5 @@
 # genomic_seg_plots
-genomic_seg_plots is a short pipeline to build genomic plots from genbank (short) genomes, displaying [NCBI seg](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjXhqnZxPLwAhXIm-AKHXmoAp4QFjAAegQIBBAD&url=ftp%3A%2F%2Fftp.ncbi.nlm.nih.gov%2Fpub%2Fseg%2Fseg%2F&usg=AOvVaw2s1FT-lfX5HmgPegjJk2tB) analysis output, and genomic features. It's main objective is to automatize and easily locate simple sequences.
+genomic_seg_plots is a short pipeline to build genomic plots from genbank (short) genomes, displaying [NCBI seg](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjXhqnZxPLwAhXIm-AKHXmoAp4QFjAAegQIBBAD&url=ftp%3A%2F%2Fftp.ncbi.nlm.nih.gov%2Fpub%2Fseg%2Fseg%2F&usg=AOvVaw2s1FT-lfX5HmgPegjJk2tB) analysis output, and genomic features. It's main objective is to automatize and easily locate simple sequences (SS).
 
 >### Dependencies
 These are genomic_seg_plots dependencies, links to their installing instructions, commands for installation, and used versions:
@@ -47,16 +47,17 @@ if all requirements are met you should be ready to go
 
 ``` 
 .
-├── bin <-  Where you have to be to invoke ./genomic_seg_plots
+├── bin <-  Where you have to be to invoke scripts
 │
 ├── data
-│   └── Raw_database <- NCBI genomic genbank files 
+│   └── Raw_database <- Place here genomic genbank files 
 │
 └── results
     ├── GenFeatures_locations <- Contains csv files with genomic features extracted from genbank file
     ├── Proteomic_fasta <- Fasta aminoacid files to serve as seg input
     ├── seg <- NCBI seg analysis output for high (.faa), low (.faa) and both (.csv) type of sequences
     ├── Complexity_genomic_plots/anytaxon <- tiff figures built with ggplot2
+    ├── stackedplots <- tiff files of stacked SS plots
 ```
 >### Using ./genomic_complexplots.sh
 Analyzed sequences of **anytaxon** must be contained in [data/Raw_Database/](https://github.com/abelardoacm/genomic_seg_plots/tree/main/data/Raw_database) for what we suggest to download sequences taxon by taxon as follows, with the general query:
@@ -69,17 +70,12 @@ anytaxon [ORGANISM] AND srcdb_refseq[PROP]
 
 #### With genomes within genbank files at data/Raw_Database/
 
-From bin you only have to type:
-```
-./genomic_complexplots.sh <anytaxon> <windowsize> <complexity low cut> <complexity high cut>
-```
-or
+From bin you only have to invoke one of included scripts,
 ```
 ./genomic_slimcomplots.sh <anytaxon> <windowsize> <complexity low cut> <complexity high cut>
 ```
-for example with sample in included in repo
+ for example (with included data):
 ```
-./genomic_complexplots.sh Nidovirales 12 1.9 2.1
 ./genomic_slimcomplots.sh Nidovirales 12 1.9 2.1
 ```
 will save several genomic plots at [results/Complexity_genomic_plots/](https://github.com/abelardoacm/genomic_seg_plots/tree/main/results/Complexity_genomic_plots) *anytaxon* subfolder, indicating simple sequences in genome.
@@ -88,8 +84,7 @@ This is the genomic slimcompplot for SARS CoV2:
 
 ![](SARSCOV2slimplot.png)
 
-and the genomic complexplot:
 
-![](SARSCOV2complexplot.png)
+
 
 
