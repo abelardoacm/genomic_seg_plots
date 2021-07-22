@@ -1,4 +1,3 @@
-
 #LOADING LIBRARY
 library("tidyverse")
 library("ggrepel")
@@ -267,8 +266,8 @@ stackedplot <- ggplot() +
   geom_text(hjust="outward",data=namesofvirus, aes(x=max(Anytaxon_df$End), y=positions_in_y[position], label=paste(" ",gsub("[^a-zA-Z0-9]"," ",unique(nombres)))),color="black" ,size=0.5)+
   geom_text(data=Anytaxon_df, aes(x=0, y=(-0.02), label="0"),color="gray" ,size=1.5)+
   geom_text(data=Anytaxon_df, aes(x=max(End,na.rm=TRUE), y=(-0.02), label=max(End,na.rm=TRUE)),color="gray" ,size=1.5)+
-  #geom_point(data=Anytaxon_lo_complexity, mapping=aes(x=adj_beg, y=positions_in_y[position]),shape=20, fill="blue", color=Anytaxon_lo_complexity$colorsito, size=0.2)+
-  geom_text(data=Anytaxon_lo_complexity, aes(x=adj_beg, y=positions_in_y[position],label=maxaa ),color=Anytaxon_lo_complexity$colorsito, size=1.5)
+  geom_point(data=Anytaxon_lo_complexity, mapping=aes(x=adj_beg, y=positions_in_y[position]),shape=20, fill="blue", color=Anytaxon_lo_complexity$colorsito, size=0.2)
+  #geom_text(data=Anytaxon_lo_complexity, aes(x=adj_beg, y=positions_in_y[position],label=maxaa ),color=Anytaxon_lo_complexity$colorsito, size=1.5)
   
 
 #tiff("stackedplot", units="in", width=10, height=5, res=600) #tiff resolution parameters

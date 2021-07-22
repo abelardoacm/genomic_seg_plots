@@ -1,22 +1,22 @@
-
-
+#LOAD PACKAGES
 library("tidyverse")
 library("ggrepel")
 
-outdir <- "../results/Complexity_genomic_plots/"
-system(paste("mkdir -p",outdir))
-# reading input
-#PosArgs <- "Nidovirales"
+#READ USER INPUT
 PosArgs <- as.character(commandArgs(trailingOnly = TRUE))
 anytaxon = PosArgs[1]
-#Out_subdir
+
+#MAKE OUTDIRS
+outdir <- "../results/Complexity_genomic_plots/"
+system(paste("mkdir -p",outdir))
 system(paste("mkdir -p ",outdir,anytaxon,sep=""))
 
+#READ INPUT FILES
+# annotation info
 tabla_features <- read.csv(paste("../results/GenFeatures_locations/",anytaxon,"_features_locations.csv", sep=''), header = TRUE)
 tabla_features$Beginning <- as.numeric(tabla_features$Beginning)
 tabla_features$End <- as.numeric(tabla_features$End)
-
-#reading complexity table
+# complexity table
 complexity_table <- read.csv(paste("../results/seg/",anytaxon,"_complexity.csv",sep=""),header = TRUE)
 complexity_table$length_in_aa <- complexity_table$seg_end - complexity_table$seg_begin + 1
 complexity_table$length_in_nc <- complexity_table$length_in_aa * 3
@@ -24,30 +24,33 @@ complexity_table$adj_beg <- complexity_table$origin_beg + ((complexity_table$seg
 complexity_table$adj_end <- complexity_table$adj_beg + complexity_table$length_in_nc
 complexity_table$is_high <- str_detect(complexity_table$secuence, "^[:upper:]+$")
 complexity_table <- complexity_table %>% distinct(ncbi_taxid, secuence, .keep_all = TRUE)
+#low complexity subset
 low_complexity <- complexity_table[which(complexity_table$is_high == FALSE),] 
-max_in_low_complexity <- max(low_complexity$complexity,na.rm=TRUE)
-correction_axis <- 20
-minimum_y_axis <- (min(low_complexity$complexity - max_in_low_complexity, na.rm=TRUE)/correction_axis)
 
+#PLOT MODIFIERS
+max_in_low_complexity <- max(low_complexity$complexity,na.rm=TRUE) #maximum value in lowcomplexity
+correction_axis <- 20 #value to adjust length of bars 
+minimum_y_axis <- (min(low_complexity$complexity - max_in_low_complexity, na.rm=TRUE)/correction_axis)#minimum value in lowcomplexity
 
-#############################################################
+#OBJECTS TO ITERATE
 taxids <- complexity_table$ncbi_taxid[!duplicated(complexity_table$ncbi_taxid)] # Make a vector containing unique taxids
 alternate_v <- as.vector(rbind(rep(-1,length(tabla_features$End)),(1))) # Only a vector to alternate positions
+
+#EMPTY SUBSETS
 Anytaxon_df <- NULL
-# subsets of feature class
 Anytaxon_df_source <- NULL
 Anytaxon_df_CDSs <- NULL
 Anytaxon_df_genes <- NULL
 Anytaxon_df_UTRs <- NULL
 Anytaxon_df_peptides <- NULL
 Anytaxon_df_stemloops <- NULL
-outfilename <- ""
-current_genome <- ""
 Anytaxon_df_complexity <- NULL
 Anytaxon_hi_complexity <- NULL
 Anytaxon_lo_complexity <- NULL
+outfilename <- ""
+current_genome <- ""
 
-
+#GGPLOTTING
 for(t in taxids){
   Anytaxon_df <- tabla_features[which(tabla_features$NCBI_taxid == t),]
   Anytaxon_df <- Anytaxon_df[order(Anytaxon_df$Region_feature_class, Anytaxon_df$Beginning, Anytaxon_df$End),]
@@ -131,7 +134,7 @@ for(t in taxids){
     geom_text(vjust="inward",hjust="inward",data=Anytaxon_df, aes(x=0, y=minimum_y_axis, label=Anytaxon_df$Viral_species[1]),color="black" ,size=2)+
     geom_text(data=Anytaxon_df, aes(x=0, y=(-0.02), label="0"),color="gray" ,size=1.5)+
     geom_text(data=Anytaxon_df, aes(x=max(End,na.rm=TRUE), y=(-0.02), label=max(End,na.rm=TRUE)),color="gray" ,size=1.5)+
-    geom_point(data=Anytaxon_lo_complexity, mapping=aes(x=adj_beg, y=0.07),shape=20, fill="blue", color="darkred", size=0.5)
+    geom_point(data=Anytaxon_lo_complexity, mapping=aes(x=adj_beg, y=0.07),shape=20, fill="blue", color="darkred", size=0.8)
   print(current_genome)
   dev.off()
 }
